@@ -1,25 +1,15 @@
-## Freshdesk App Project
+## Voog clientbase app for Freshdesk
 
-Congratulations on creating your App Project! Feel free to replace this text with your project description.
+A simple Freshdesk app that displays information about ticket requester for Voog Clientbase.
 
-### Project folder structure explained
+### Installation parameters
 
-    .
-    ├── .gitignore                In case you decide to version this code with Git.
-    ├── README.md                 This file.
-    ├── app                       Source code of the app.
-    │   └── template.html         HTML for the app.
-    |   └── app.js                Business logic for the app.
-    |   └── style.scss            Styles for the app.
-    ├── assets                    Store all project assets like CSS, JS and images.
-    │   └── logo.png
-    ├── config                    Installation parameter configs.
-    │   ├── iparam_en.yml         Installation parameter config in English language.
-    │   └── iparam_test_data.yml  Installation parameter data for local testing.
-    └── manifest.yml              Project manifest.
+When installing the application, you need to specify some installation parameters for it to work:
 
-More details on the structure and files:
+1. `cb_url` - Clientbase URL for making requests. E.g. http://clientbase.voog.in
+2. `email` - E-mail address of the Clientbase account that the requests are made with. The account needs to have ApiSupport role.
+3. `password` - Password of the Clientbase account
 
-1. Unsupported files inside `assets/` will not be packaged. Supported file extensions include: `.jpg`, `.png`, `.gif`, `.css` and `.js`.
-2. `iparam_en.yml` has commented sample configuration. `_en` in the configuration refers to English language. If you need to support installation-configuration in multiple languages, say Italian in addition to English, you need to have a `iparam_it.yml` configuration. English is the default fallback language.
-3. `iparam_test_data.yml` is the installation parameter that is used in Local Testing.
+### Installation, development, questions, etc
+
+Please refer to [Freshdesk documentation]( https://developer.freshdesk.com/docs/apps/).
