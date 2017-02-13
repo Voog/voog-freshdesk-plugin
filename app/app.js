@@ -2,33 +2,94 @@
   "use strict";
   return {
     initialize: function() {
-      console.log("Basic Demo App!");
-      if(page_type == "ticket") {
-        var requesterName = domHelper.ticket.getTicketInfo()
-          .helpdesk_ticket.requester_name;
-        jQuery(this.$container).find('#apptext').text("Ticket created by " + requesterName);
+      this.options = {
+        cb_url:   "{{ iparam.cb_url }}",
+        email:    "{{ iparam.email }}",
+        password: "{{ iparam.password }}"
+      };
+
+      this.search();
+
+      appPlaceholder.ticket.belowRequestorInfo(jQuery(this.$container));
+    },
+
+    search: function() {
+      var loadingAppText = jQuery(this.$container).find('#voog-app-loading'),
+          requester_email = domHelper.ticket.getContactInfo()
+            .user.email;
+
+      this.showAppText(loadingAppText);
+
+      this.searchUser(requester_email);
+    },
+
+    getAPIUrl: function(path) {
+      return this.options.cb_url + path;
+    },
+
+    searchUser: function(user_email) {
+      var authString = 'Basic ' + btoa(this.options.email + ':' + this.options.password);
+
+      jQuery.ajax({
+        url: this.getAPIUrl('/api/support_integrations/users'),
+        data: {
+          email: user_email
+        },
+        type: 'GET',
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader('Authorization', authString);
+        },
+        dataType: 'json',
+        success: this.handleRequestSuccess.bind(this),
+        error: this.handleRequestError.bind(this)
+      });
+    },
+
+    showAppText: function(appTextToShow) {
+      var shownAppTexts = jQuery(this.$container).find('.app-text-visible');
+
+      shownAppTexts.removeClass('app-text-visible');
+
+      appTextToShow.addClass('app-text-visible');
+    },
+
+    handleRequestError: function(xhr, status, errorString) {
+      var errorContainer = jQuery(this.$container).find('#voog-app-error'),
+          retryButton = jQuery('<button />');
+
+      retryButton.text('Retry');
+      retryButton.click(this.search.bind(this));
+
+      errorContainer.text('Request error: ' + errorString + ' (' + status + ')');
+      errorContainer.append(retryButton);
+
+      this.showAppText(errorContainer);
+    },
+
+    handleRequestSuccess: function(data) {
+      var successContainer = jQuery(this.$container).find('#voog-app-success'),
+          newContent = '';
+
+      newContent += 'Clientbase user: <a href="' + data.url + '" target="_blank">' + data.name + '</a>';
+
+      if (data.phone) {
+        newContent += ' (☎' + data.phone + ')';
       }
-      else if(page_type == "contact"){
-        var agentName = domHelper.contact.getContactInfo().user.name;
-        jQuery(this.$container).find('#apptext').text("Hello " + agentName);
+
+      newContent += '<br /><br />Accounts: <ol>';
+
+      for (var index = 0; index < data.accounts.length; index++) {
+        var account = data.accounts[index];
+
+        newContent += '<li><a href="' + account.url + '" target="_blank">' + account.domain + '</a> (' + account.type + ')</li>';
       }
+
+      newContent += '</ol>';
+
+      successContainer.html(newContent);
+
+      this.showAppText(successContainer);
     }
   };
 })();
 
-/*
-{%comment%}
-
-## Help: Using iparam (​installation parameters) in code
-
-iparam: The ​settings that you want your users to configure when installing the
-app.
-
-iparam definition is made in config/iparam_en.yml file. To use the defined
-iparam in code, use Liquid notation like:
-
-- {{iparam.username}}
-- {{iparam.country}}
-
-{%endcomment%}
-*/
