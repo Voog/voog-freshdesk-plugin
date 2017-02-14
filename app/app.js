@@ -60,7 +60,7 @@
       retryButton.text('Retry');
       retryButton.click(this.search.bind(this));
 
-      errorContainer.text('Request error: ' + errorString + ' (' + status + ')');
+      errorContainer.text('Request error: ' + errorString + ' (' + status + ') ');
       errorContainer.append(retryButton);
 
       this.showAppText(errorContainer);
@@ -81,7 +81,7 @@
       for (var index = 0; index < data.accounts.length; index++) {
         var account = data.accounts[index];
 
-        newContent += '<li><a href="' + account.url + '" target="_blank">' + account.domain + '</a> (' + account.type + ')</li>';
+        newContent += '<li><a href="' + account.url + '" target="_blank">' + account.domain + '</a> (' + account.type + (account.owner?', owner':'') + ')</li>';
       }
 
       newContent += '</ol>';
