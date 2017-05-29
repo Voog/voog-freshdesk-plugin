@@ -81,7 +81,14 @@
       for (var index = 0; index < data.accounts.length; index++) {
         var account = data.accounts[index];
 
-        newContent += '<li><a href="' + account.url + '" target="_blank">' + account.domain + '</a> (' + account.type + (account.owner?', owner':'') + ')</li>';
+        newContent += '<li>';
+        newContent += '<a href="' + account.url + '" target="_blank">' + account.domain + '</a> (' + account.type + (account.owner?', owner':'') + ')';
+
+        if (account.tags.length > 0) {
+          newContent += '<br /> Tags: ' + account.tags.join(', ');
+        }
+
+        newContent += '</li>';
       }
 
       newContent += '</ol>';
